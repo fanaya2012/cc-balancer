@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-hello-service
+spec:
+  # Connects traffic to pods with label app=fastapi-hello
+  selector:
+    app: fastapi-hello
+  ports:
+  - port: 80
+    targetPort: 80

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-hello
+spec:
+  # Run 2 pods for high availability
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fastapi-hello
+  template:
+    metadata:
+      labels:
+        app: fastapi-hello
+    spec:
+      containers:
+      - name: fastapi-hello
+        image: ghcr.io/fanaya2012/fastapi-hello:latest  # Image containing FastAPI app
+        imagePullPolicy: Always # Need to download it from Githug
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: ghcr-secret
+      # Anti-affinity ensures 1 pod per node for fault tolerance
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app: fastapi-hello
+            topologyKey: "kubernetes.io/hostname"
